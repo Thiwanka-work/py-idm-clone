@@ -1,0 +1,25 @@
+Privacy Policy for EasyDownloader
+
+Effective Date: 2026
+
+Welcome to EasyDownloader! We respect your privacy and are committed to protecting it. This Privacy Policy explains what information we collect, how we use it, and your rights when using our software.
+
+1. Information We Collect
+EasyDownloader is a local desktop application. We do NOT collect, store, or transmit your personal data, downloading history, IP addresses, or files to our servers. All downloads and activities are processed locally on your device.
+
+2. Browser Extension
+If you choose to install the EasyDownloader browser extension to capture downloads automatically, the extension will only intercept file download URLs to forward them to the local EasyDownloader application on your PC. The extension does not track your browsing history or send data to third parties.
+
+3. Feedback and Bug Reports
+If you voluntarily submit feedback or bug reports using the in-app "Feedback" feature, your message will be securely transmitted to the developer (Thiwanka) via a third-party form service. We will only use this information to improve the software and resolve technical issues. We will not share your feedback data with third parties or use it for marketing purposes.
+
+4. Third-Party Services
+EasyDownloader uses "yt-dlp" and "imageio-ffmpeg" for video downloads. These third-party components interact directly with media hosting websites to fetch content. 
+
+5. Changes to This Policy
+We may update our Privacy Policy from time to time. Any changes will be included in updates to the software.
+
+6. Contact Us
+If you have any questions about this Privacy Policy, you can contact the developer by using the in-app Feedback feature or by reaching out to the official support channels.
+
+By installing and using EasyDownloader, you agree to this Privacy Policy.

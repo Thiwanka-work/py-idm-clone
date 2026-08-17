@@ -49,7 +49,7 @@ def get_status_color(status: str):
 class IDMCloneGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Python Download Manager")
+        self.title("EasyDownloader")
         self.geometry("900x640")
         self.minsize(720, 440)
 
@@ -69,6 +69,7 @@ class IDMCloneGUI(ctk.CTk):
 
         threading.Thread(target=self._load_saved_folder, daemon=True).start()
         self.after(800, self.update_status)
+        self.after(1000, self._check_first_run)
 
     # ── Toolbar ───────────────────────────────────────────────────────────────
 
@@ -98,6 +99,15 @@ class IDMCloneGUI(ctk.CTk):
             tb, text="", font=("Roboto", 11), text_color="#7f8c8d")
         self.folder_lbl.pack(side="left", padx=8)
 
+        # Feedback button
+        ctk.CTkButton(
+            tb, text="🐛  Feedback",
+            command=self._show_feedback_dialog,
+            width=110, height=36,
+            fg_color="#8e44ad", hover_color="#732d91",
+            font=("Roboto", 12)
+        ).pack(side="right", padx=12, pady=14)
+
         # Clear completed button
         ctk.CTkButton(
             tb, text="🗑  Clear Done",
@@ -105,10 +115,10 @@ class IDMCloneGUI(ctk.CTk):
             width=120, height=36,
             fg_color="#2c2c2c", hover_color="#3d3d3d",
             font=("Roboto", 12)
-        ).pack(side="right", padx=12, pady=14)
+        ).pack(side="right", padx=4, pady=14)
 
         ctk.CTkLabel(
-            tb, text="IDM Clone",
+            tb, text="EasyDownloader",
             font=("Roboto", 20, "bold"), text_color="#00ADB5"
         ).pack(side="right", padx=12)
 
@@ -161,6 +171,90 @@ class IDMCloneGUI(ctk.CTk):
         if not self._server_was_offline:
             self._server_was_offline = True
             self.offline_banner.pack(side="top", fill="x", after=self.winfo_children()[0])
+
+    def _check_first_run(self):
+        config_dir = os.path.join(os.path.expanduser("~"), ".easydownloader")
+        os.makedirs(config_dir, exist_ok=True)
+        marker = os.path.join(config_dir, "extension_prompted.txt")
+        
+        if not os.path.exists(marker):
+            self._show_extension_guide()
+            try:
+                with open(marker, "w") as f:
+                    f.write("1")
+            except Exception:
+                pass
+
+    def _show_extension_guide(self):
+        dialog = ctk.CTkToplevel(self)
+        dialog.title("Install Chrome Extension")
+        dialog.geometry("600x350")
+        dialog.resizable(False, False)
+        dialog.transient(self)
+        dialog.grab_set()
+
+        ctk.CTkLabel(dialog, text="Welcome to EasyDownloader! 🎉", font=("Roboto", 20, "bold"), text_color="#00ADB5").pack(pady=(20, 10))
+        
+        instructions = (
+            "To catch downloads automatically from your browser, please add the extension:\n\n"
+            "1. Click the button below to open Chrome Extensions.\n"
+            "2. Turn on 'Developer mode' (top right corner).\n"
+            "3. Click 'Load unpacked' (top left corner).\n"
+            "4. Select the 'extension' folder located in the EasyDownloader folder.\n"
+            "   (Usually: C:\\Program Files\\EasyDownloader\\extension)"
+        )
+        
+        ctk.CTkLabel(dialog, text=instructions, font=("Roboto", 13), justify="left").pack(padx=20, pady=10)
+
+        import webbrowser
+        def open_chrome():
+            webbrowser.open("chrome://extensions/")
+            
+        ctk.CTkButton(dialog, text="Open Chrome Extensions", command=open_chrome, fg_color="#00ADB5", hover_color="#008c94", font=("Roboto", 14, "bold"), height=40).pack(pady=20)
+
+    def _show_feedback_dialog(self):
+        dialog = ctk.CTkToplevel(self)
+        dialog.title("Send Feedback / Report Bug")
+        dialog.geometry("500x370")
+        dialog.resizable(False, False)
+        dialog.transient(self)
+        dialog.grab_set()
+
+        ctk.CTkLabel(dialog, text="We value your feedback!", font=("Roboto", 16, "bold"), text_color="#00ADB5").pack(pady=(15, 5))
+        ctk.CTkLabel(dialog, text="Tell us about a bug you found or a feature you want.", font=("Roboto", 12)).pack(pady=(0, 15))
+
+        textbox = ctk.CTkTextbox(dialog, width=440, height=160)
+        textbox.pack(pady=5)
+        
+        status_lbl = ctk.CTkLabel(dialog, text="", font=("Roboto", 12))
+        status_lbl.pack(pady=2)
+
+        def _send():
+            msg = textbox.get("1.0", "end-1c").strip()
+            if not msg:
+                return
+            status_lbl.configure(text="Sending...", text_color="#aaaaaa")
+            dialog.update()
+            
+            def _do_send():
+                try:
+                    # Obfuscated email to avoid direct scraping
+                    # target = thiwasan2002@gmail.com
+                    target = "thiwasan2002" + "@" + "gmail" + ".com"
+                    requests.post(
+                        f"https://formsubmit.co/ajax/{target}",
+                        data={"Feedback": msg, "_subject": "EasyDownloader Feedback"},
+                        headers={"Accept": "application/json", "Referer": "https://github.com/Thiwanka-work/py-idm-clone"},
+                        timeout=10
+                    )
+                    self.after(0, lambda: status_lbl.configure(text="✅ Feedback sent successfully! Thank you.", text_color="#2ecc71"))
+                    self.after(2000, dialog.destroy)
+                except Exception as e:
+                    self.after(0, lambda: status_lbl.configure(text="❌ Failed to send feedback. Check your connection.", text_color="#e74c3c"))
+                    
+            threading.Thread(target=_do_send, daemon=True).start()
+            
+        ctk.CTkButton(dialog, text="Send", command=_send, fg_color="#8e44ad", hover_color="#732d91", font=("Roboto", 13, "bold"), width=120).pack(pady=10)
 
     # ── Add URL dialog ─────────────────────────────────────────────────────────
 

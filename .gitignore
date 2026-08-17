@@ -8,4 +8,5 @@ venv/
 ENV/
 env/
 .idea/
-.vscode/
+config.bat
+node_modules
