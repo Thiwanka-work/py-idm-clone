@@ -355,11 +355,19 @@ class IDMCloneGUI(ctk.CTk):
             w['progress_bar'].set(pct / 100.0)
 
             # Speed / details
-            w['details'].configure(text=f"{task['speed']} | {int(pct)}%")
+            if st.startswith('error'):
+                err_msg = st[6:].strip() if len(st) > 6 else "Unknown error"
+                if err_msg.lower().startswith("error:"):
+                    err_msg = err_msg[6:].strip()
+                w['details'].configure(text=self._short(err_msg, maxlen=110), text_color="#e74c3c")
+                badge_text = " Error "
+            else:
+                w['details'].configure(text=f"{task['speed']} | {int(pct)}%", text_color="#7f8c8d")
+                badge_text = f" {st.title()} "
 
             # Badge
             bg, fg = get_status_color(st)
-            w['badge'].configure(text=f" {st.title()} ",
+            w['badge'].configure(text=badge_text,
                                   fg_color=bg, text_color=fg)
 
             # Card border colour
