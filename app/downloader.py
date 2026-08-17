@@ -94,12 +94,18 @@ class Downloader:
                     cur = self.downloaded_size
                     speed_bps = (cur - prev_dl)
                     prev_dl = cur
+                    total_str = ""
                     if self.total_size:
                         self.progress = min(99, int(cur / self.total_size * 100))
-                    if speed_bps >= 1024 * 1024:
-                        self.speed = f"{speed_bps / 1024 / 1024:.2f} MB/s"
+                        if self.total_size >= 1073741824:  # 1 GB
+                            total_str = f" / {self.total_size / 1073741824:.2f} GB"
+                        else:
+                            total_str = f" / {self.total_size / 1048576:.2f} MB"
+                            
+                    if speed_bps >= 1048576:
+                        self.speed = f"{speed_bps / 1048576:.2f} MB/s{total_str}"
                     else:
-                        self.speed = f"{speed_bps / 1024:.1f} KB/s"
+                        self.speed = f"{speed_bps / 1024:.1f} KB/s{total_str}"
 
         monitor_thread = threading.Thread(target=speed_monitor, daemon=True)
         monitor_thread.start()
@@ -156,9 +162,16 @@ class Downloader:
                         now = time.time()
                         if now - prev_time >= 1.0:
                             spd = (downloaded - prev_dl) / (now - prev_time)
-                            self.speed = (f"{spd / 1024 / 1024:.2f} MB/s"
-                                          if spd >= 1024 * 1024
-                                          else f"{spd / 1024:.1f} KB/s")
+                            total_str = ""
+                            if total:
+                                if total >= 1073741824:  # 1 GB
+                                    total_str = f" / {total / 1073741824:.2f} GB"
+                                else:
+                                    total_str = f" / {total / 1048576:.2f} MB"
+                            
+                            self.speed = (f"{spd / 1048576:.2f} MB/s{total_str}"
+                                          if spd >= 1048576
+                                          else f"{spd / 1024:.1f} KB/s{total_str}")
                             prev_time = now
                             prev_dl = downloaded
 

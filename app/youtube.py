@@ -95,11 +95,21 @@ class YouTubeDownloader:
                 try:
                     total = d.get('total_bytes') or d.get('total_bytes_estimate')
                     downloaded = d.get('downloaded_bytes', 0)
+                    
+                    total_str = ""
                     if total:
                         self.progress = int((downloaded / total) * 100)
+                        if total >= 1073741824:  # 1 GB
+                            total_str = f" / {total / 1073741824:.2f} GB"
+                        else:
+                            total_str = f" / {total / 1048576:.2f} MB"
+                            
                     speed = d.get('speed', 0)
                     if speed:
-                        self.speed = f"{speed / 1024 / 1024:.2f} MB/s"
+                        if speed >= 1048576:
+                            self.speed = f"{speed / 1048576:.2f} MB/s{total_str}"
+                        else:
+                            self.speed = f"{speed / 1024:.1f} KB/s{total_str}"
                 except Exception:
                     pass
 
