@@ -104,8 +104,13 @@ class YouTubeDownloader:
                     pass
 
     def start(self):
-        import imageio_ffmpeg
-        ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
+        try:
+            import imageio_ffmpeg
+            ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
+        except ImportError:
+            with self._lock:
+                self.status = "error: imageio-ffmpeg missing"
+            return
 
         # Ensure download directory exists
         os.makedirs(self.download_path, exist_ok=True)
