@@ -129,7 +129,7 @@ class YouTubeDownloader:
                 'progress_hooks': [self.progress_hook],
                 'ffmpeg_location': ffmpeg_path,
                 'logger': DummyLogger(),
-                'extractor_args': YT_EXTRACTOR_ARGS,
+                'extractor_args': extractor_args,
                 'noplaylist': True,
             }
         else:
@@ -153,7 +153,7 @@ class YouTubeDownloader:
                 'format': fmt,
                 'ffmpeg_location': ffmpeg_path,
                 'logger': DummyLogger(),
-                'extractor_args': YT_EXTRACTOR_ARGS,
+                'extractor_args': extractor_args,
                 'noplaylist': True,
                 'concurrent_fragment_downloads': 4,
                 'retries': 10,
