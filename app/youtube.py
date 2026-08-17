@@ -131,6 +131,7 @@ class YouTubeDownloader:
                 'logger': DummyLogger(),
                 'extractor_args': extractor_args,
                 'noplaylist': True,
+                'cachedir': False,
             }
         else:
             if self.resolution == "best":
@@ -155,11 +156,9 @@ class YouTubeDownloader:
                 'logger': DummyLogger(),
                 'extractor_args': extractor_args,
                 'noplaylist': True,
-                'concurrent_fragment_downloads': 4,
                 'retries': 10,
                 'fragment_retries': 10,
-                # Smaller chunk size reduces 403 chance on fragment requests
-                'http_chunk_size': 10485760,  # 10 MB chunks
+                'cachedir': False,
             }
 
             if self.download_subtitles:
